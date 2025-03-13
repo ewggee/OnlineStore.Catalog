@@ -20,5 +20,5 @@ public interface ICategoryRepository : IRepository<Category>
     /// Возвращает <b>true</b>, если категория с ID <paramref name="categoryId"/> обладает подкатегориями, иначе <b>false</b>.
     /// </summary>
     /// <param name="categoryId">ID категории.</param>
-    Task<bool> IsCategoryHasSubcategoriesAsync(int categoryId);
+    Task<bool> IsCategoryHasSubcategoriesAsync(int categoryId, CancellationToken cancellation);
 }

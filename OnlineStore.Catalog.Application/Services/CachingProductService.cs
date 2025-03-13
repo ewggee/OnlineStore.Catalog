@@ -47,9 +47,9 @@ namespace OnlineStore.Catalog.Application.Services
             return products;
         }
 
-        public async Task AddProductAsync(ShortProductDto productDto, CancellationToken cancellation)
+        public async Task<int> AddProductAsync(ShortProductDto productDto, CancellationToken cancellation)
         {
-            await _productService.AddProductAsync(productDto, cancellation);
+            return await _productService.AddProductAsync(productDto, cancellation);
         }
 
         public async Task UpdateAsync(ShortProductDto productDto, CancellationToken cancellation)

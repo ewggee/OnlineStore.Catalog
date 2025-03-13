@@ -84,8 +84,14 @@ public class CategoryService : ICategoryService
     }
 
     /// <inheritdoc/>
-    public async Task<bool> IsCategoryHasSubcategoriesAsync(int categoryId)
+    public async Task<bool> IsCategoryHasSubcategoriesAsync(int categoryId, CancellationToken cancellation)
     {
-        return await _categoryRepository.IsCategoryHasSubcategoriesAsync(categoryId);
+        return await _categoryRepository.IsCategoryHasSubcategoriesAsync(categoryId, cancellation);
+    }
+
+    /// <inheritdoc/>
+    public async Task<bool> IsCategoryHasProductsAsync(int categoryId, CancellationToken cancellation)
+    {
+        return await _productRepository.IsCategoryHasProductsAsync(categoryId, cancellation);
     }
 }

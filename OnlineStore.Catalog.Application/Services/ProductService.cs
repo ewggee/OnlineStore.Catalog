@@ -116,14 +116,15 @@ public sealed class ProductService : IProductService
     }
 
     /// <inheritdoc/>
-    public async Task AddProductAsync(ShortProductDto productDto, CancellationToken cancellation)
+    public async Task<int> AddProductAsync(ShortProductDto productDto, CancellationToken cancellation)
     {
         var product = _mapper.Map<Product>(productDto);
 
         product.Images = await _imageService.SaveProductImagesAsync(productDto.ImagesUrls, product, cancellation);
         product.CreatedAt = _timeProvider.GetUtcNow().UtcDateTime;
 
-        await _productRepository.AddAsync(product, cancellation);
+        var productId = await _productRepository.AddAsync(product, cancellation);
+        return productId;
     }
 
     /// <inheritdoc/>

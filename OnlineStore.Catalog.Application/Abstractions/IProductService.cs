@@ -33,10 +33,10 @@ public interface IProductService
     Task<List<ShortProductDto>> GetAllAsync(int[] productsIds, CancellationToken cancellation);
 
     /// <summary>
-    /// Добавляет товар.
+    /// Добавляет товар и возвращает сгенерированный ID.
     /// </summary>
     /// <param name="productDto">Транспортная модель товара.</param>
-    Task AddProductAsync(ShortProductDto productDto, CancellationToken cancellation);
+    Task<int> AddProductAsync(ShortProductDto productDto, CancellationToken cancellation);
 
     /// <summary>
     /// Обновляет данные о товаре.
