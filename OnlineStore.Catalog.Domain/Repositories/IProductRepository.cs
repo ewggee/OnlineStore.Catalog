@@ -28,7 +28,18 @@ public interface IProductRepository : IRepository<Product>
     Task<int> GetProductsTotalCountAsync(int categoryId, CancellationToken cancellation);
 
     /// <summary>
+    /// Добавляет товар в БД и возвращает сгенерированный ID записи.
+    /// </summary>
+    new Task<int> AddAsync(Product product, CancellationToken cancellation);
+
+    /// <summary>
     /// Обновляет значение StockQuantity у всех товаров в массиве.
     /// </summary>
     Task UpdateProductsCountAsync(Product[] products, CancellationToken cancellation);
+
+    /// <summary>
+    /// Возвращает <b>true</b>, если в категории с ID <paramref name="categoryId"/> есть товары, иначе <b>false</b>.
+    /// </summary>
+    /// <param name="categoryId">ID категории.</param>
+    Task<bool> IsCategoryHasProductsAsync(int categoryId, CancellationToken cancellation);
 }
