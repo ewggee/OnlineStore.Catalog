@@ -45,11 +45,19 @@ public sealed class CategoryRepository(
         return query.ToListAsync(cancellation);
     }
 
-    public Task<bool> IsCategoryHasSubcategoriesAsync(int categoryId)
+    public new async Task<int> AddAsync(Category category, CancellationToken cancellation)
+    {
+        var result = await MutableDbContext.AddAsync(category, cancellation);
+        await MutableDbContext.SaveChangesAsync(cancellation);
+
+        return result.Entity.Id;
+    }
+
+    public Task<bool> IsCategoryHasSubcategoriesAsync(int categoryId, CancellationToken cancellation)
     {
         return ReadOnlyDbContext
             .Set<Category>()
-            .AnyAsync(subc => subc.ParentCategoryId == categoryId);
+            .AnyAsync(subc => subc.ParentCategoryId == categoryId, cancellation);
     }
 
     private IEnumerable<int> GetSubcategoryiesIds(int categoryId)

@@ -16,6 +16,8 @@ public interface ICategoryRepository : IRepository<Category>
     /// </summary>
     Task<List<Category>> GetWithoutSubsAsync(CancellationToken cancellation);
 
+    new Task<int> AddAsync(Category category, CancellationToken cancellation);
+
     /// <summary>
     /// Возвращает <b>true</b>, если категория с ID <paramref name="categoryId"/> обладает подкатегориями, иначе <b>false</b>.
     /// </summary>

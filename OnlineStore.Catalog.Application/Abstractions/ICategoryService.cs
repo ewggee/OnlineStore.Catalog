@@ -37,7 +37,7 @@ public interface ICategoryService
     /// <summary>
     /// Добавляет категорию в БД.
     /// </summary>
-    Task AddAsync(CategoryDto categoryDto, CancellationToken cancellation);
+    Task<int> AddAsync(CategoryDto categoryDto, CancellationToken cancellation);
 
     /// <summary>
     /// Обновляет значения категории.

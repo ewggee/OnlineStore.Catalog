@@ -60,11 +60,13 @@ public class CategoryService : ICategoryService
     }
 
     /// <inheritdoc/>
-    public async Task AddAsync(CategoryDto categoryDto, CancellationToken cancellation)
+    public async Task<int> AddAsync(CategoryDto categoryDto, CancellationToken cancellation)
     {
         var category = _mapper.Map<Category>(categoryDto);
 
-        await _categoryRepository.AddAsync(category, cancellation);
+        var categoryId = await _categoryRepository.AddAsync(category, cancellation);
+
+        return categoryId;
     }
 
     /// <inheritdoc/>
