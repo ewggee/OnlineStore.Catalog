@@ -37,7 +37,7 @@ public interface ICategoryService
     /// <summary>
     /// Добавляет категорию в БД.
     /// </summary>
-    Task AddAsync(CategoryDto categoryDto, CancellationToken cancellation);
+    Task<int> AddAsync(CategoryDto categoryDto, CancellationToken cancellation);
 
     /// <summary>
     /// Обновляет значения категории.
@@ -53,5 +53,11 @@ public interface ICategoryService
     /// Возвращает <b>true</b>, если категория с ID <paramref name="categoryId"/> обладает подкатегориями, иначе <b>false</b>.
     /// </summary>
     /// <param name="categoryId">ID категории.</param>
-    Task<bool> IsCategoryHasSubcategoriesAsync(int categoryId);
+    Task<bool> IsCategoryHasSubcategoriesAsync(int categoryId, CancellationToken cancellation);
+
+    /// <summary>
+    /// Возвращает <b>true</b>, если в категории с ID <paramref name="categoryId"/> есть товары, иначе <b>false</b>.
+    /// </summary>
+    /// <param name="categoryId">ID категории.</param>
+    Task<bool> IsCategoryHasProductsAsync(int categoryId, CancellationToken cancellation);
 }

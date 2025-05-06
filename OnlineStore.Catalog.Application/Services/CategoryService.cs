@@ -60,11 +60,13 @@ public class CategoryService : ICategoryService
     }
 
     /// <inheritdoc/>
-    public async Task AddAsync(CategoryDto categoryDto, CancellationToken cancellation)
+    public async Task<int> AddAsync(CategoryDto categoryDto, CancellationToken cancellation)
     {
         var category = _mapper.Map<Category>(categoryDto);
 
-        await _categoryRepository.AddAsync(category, cancellation);
+        var categoryId = await _categoryRepository.AddAsync(category, cancellation);
+
+        return categoryId;
     }
 
     /// <inheritdoc/>
@@ -84,8 +86,14 @@ public class CategoryService : ICategoryService
     }
 
     /// <inheritdoc/>
-    public async Task<bool> IsCategoryHasSubcategoriesAsync(int categoryId)
+    public async Task<bool> IsCategoryHasSubcategoriesAsync(int categoryId, CancellationToken cancellation)
     {
-        return await _categoryRepository.IsCategoryHasSubcategoriesAsync(categoryId);
+        return await _categoryRepository.IsCategoryHasSubcategoriesAsync(categoryId, cancellation);
+    }
+
+    /// <inheritdoc/>
+    public async Task<bool> IsCategoryHasProductsAsync(int categoryId, CancellationToken cancellation)
+    {
+        return await _productRepository.IsCategoryHasProductsAsync(categoryId, cancellation);
     }
 }

@@ -127,6 +127,14 @@ public sealed class ProductRepository(
             .FirstOrDefaultAsync();
     }
 
+    public new async Task<int> AddAsync(Product entity, CancellationToken cancellation)
+    {
+        var result = await MutableDbContext.AddAsync(entity, cancellation);
+        await MutableDbContext.SaveChangesAsync();
+
+        return result.Entity.Id;
+    }
+
     /// <inheritdoc/>
     public override Task UpdateAsync(Product product, CancellationToken cancellation)
     {
@@ -155,12 +163,21 @@ public sealed class ProductRepository(
         return MutableDbContext.SaveChangesAsync(cancellation);
     }
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Мягко удаляет товар.
+    /// </summary>
     public override Task DeleteAsync(Product product, CancellationToken cancellation)
     {
         MutableDbContext.Set<Product>().Attach(product);
         MutableDbContext.Entry(product).Property(p => p.IsDeleted).IsModified = true;
 
         return MutableDbContext.SaveChangesAsync(cancellation);
+    }
+
+    /// <inheritdoc/>
+    public Task<bool> IsCategoryHasProductsAsync(int categoryId, CancellationToken cancellation)
+    {
+        return ReadOnlyDbContext.Set<Product>()
+            .AnyAsync(p => p.CategoryId == categoryId, cancellation);
     }
 }

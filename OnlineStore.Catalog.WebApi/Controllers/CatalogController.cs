@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using OnlineStore.Catalog.Application.Abstractions;
+using OnlineStore.Catalog.Contracts.Dtos;
 using OnlineStore.Catalog.Contracts.Requests;
 
 namespace OnlineStore.Catalog.WebApi.Controllers;
@@ -47,14 +48,18 @@ public class CatalogController : ControllerBase
             return NotFound();
         }
 
-        if (!await _categoryService.IsCategoryHasSubcategoriesAsync(existingCategory.Id))
+        if (!await _categoryService.IsCategoryHasSubcategoriesAsync(existingCategory.Id, cancellation))
         {
             return BadRequest();
         }
 
         var subCategories = await _categoryService.GetSubcategoriesByIdAsync(categoryId, cancellation);
 
-        return Ok(new { category = existingCategory, subCategories });
+        return Ok(new CategoryWithSubcategoriesDto
+        {
+            Category = existingCategory,
+            Subcategories = subCategories
+        });
     }
 
     [HttpGet("{categoryId}/Products")]
@@ -66,7 +71,7 @@ public class CatalogController : ControllerBase
             return NotFound();
         }
 
-        if (await _categoryService.IsCategoryHasSubcategoriesAsync(existingCategory.Id))
+        if (await _categoryService.IsCategoryHasSubcategoriesAsync(existingCategory.Id, cancellation))
         {
             return BadRequest();
         }

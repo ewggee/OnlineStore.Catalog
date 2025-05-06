@@ -1,0 +1,81 @@
+name: ASP.NET Core CI/CD Pipeline
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+env:
+  DOTNET_VERSION: '8.0'
+  ASPNETCORE_ENVIRONMENT: 'Production'
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Cache NuGet packages
+        uses: actions/cache@v3
+        with:
+          path: ~\.nuget\packages
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-nuget-
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Build
+        run: dotnet build --configuration Release --no-restore
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-output
+          path: bin/Release/net8.0
+
+  test:
+    needs: build
+    runs-on: windows-latest
+    steps:
+      - name: Download build artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: build-output
+          path: bin/Release/net8.0
+
+      - name: Run unit tests
+        run: dotnet test --configuration Release --no-build --filter "Category=Unit"
+
+      - name: Run integration tests
+        run: dotnet test --configuration Release --no-build --filter "Category=Integration"
+        # env:
+        #   CONNECTIONSTRINGS__DEFAULTCONNECTION: ${{ secrets.TEST_DB_CONNECTION_STRING }}
+        #   CONNECTIONSTRINGS__REDIS: ${{ secrets.TEST_REDIS_CONNECTION_STRING }}
+
+  publish:
+    needs: [build, test]
+    runs-on: windows-latest
+    steps:
+      - name: Download build artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: build-output
+          path: bin/Release/net8.0
+
+      - name: Publish
+        run: dotnet publish -c Release -o ./publish
+
+      - name: Upload publish artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: product-service
+          path: ./publish
