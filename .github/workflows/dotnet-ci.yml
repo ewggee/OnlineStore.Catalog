@@ -2,9 +2,9 @@ name: ASP.NET Core CI/CD Pipeline
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "develop" ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "master" ]
 
 env:
   DOTNET_VERSION: '8.0'
