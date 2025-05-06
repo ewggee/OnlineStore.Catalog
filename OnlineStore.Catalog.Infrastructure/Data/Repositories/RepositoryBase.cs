@@ -22,9 +22,9 @@ public abstract class RepositoryBase<T> : IRepository<T> where T : class
     }
 
     /// <inheritdoc/>
-    public virtual Task<T?> GetAsync(int id)
+    public virtual Task<T?> GetAsync(int id, CancellationToken cancellation)
     {
-        return MutableDbContext.FindAsync<T>(id).AsTask();
+        return MutableDbContext.FindAsync<T>(id, cancellation).AsTask();
     }
 
     /// <inheritdoc/>

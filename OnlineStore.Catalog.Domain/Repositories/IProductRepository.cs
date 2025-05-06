@@ -33,6 +33,11 @@ public interface IProductRepository : IRepository<Product>
     new Task<int> AddAsync(Product product, CancellationToken cancellation);
 
     /// <summary>
+    /// Добавляет товары в БД.
+    /// </summary>
+    Task AddRangeAsync(Product[] products, CancellationToken cancellation);
+
+    /// <summary>
     /// Обновляет значение StockQuantity у всех товаров в массиве.
     /// </summary>
     Task UpdateProductsCountAsync(Product[] products, CancellationToken cancellation);

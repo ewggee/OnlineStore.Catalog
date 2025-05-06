@@ -1,4 +1,5 @@
-﻿using OnlineStore.Catalog.Contracts.Dtos;
+﻿using Microsoft.AspNetCore.Http;
+using OnlineStore.Catalog.Contracts.Dtos;
 using OnlineStore.Catalog.Contracts.Requests;
 
 namespace OnlineStore.Catalog.Application.Abstractions;
@@ -37,6 +38,16 @@ public interface IProductService
     /// </summary>
     /// <param name="productDto">Транспортная модель товара.</param>
     Task<int> AddProductAsync(ShortProductDto productDto, CancellationToken cancellation);
+
+    /// <summary>
+    /// Добавляет товары.
+    /// </summary>
+    Task AddProductsAsync(ShortProductDto[] productDtos, CancellationToken cancellation);
+
+    ///// <summary>
+    ///// Добавляет массив товаров.
+    ///// </summary>
+    //Task AddProductsAsync(ShortProductDto[] productDto, CancellationToken cancellation);
 
     /// <summary>
     /// Обновляет данные о товаре.

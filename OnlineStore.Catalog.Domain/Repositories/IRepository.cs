@@ -10,7 +10,7 @@ public interface IRepository<T> where T : class
     /// <summary>
     /// Получает сущность по ID.
     /// </summary>
-    Task<T?> GetAsync(int id);
+    Task<T?> GetAsync(int id, CancellationToken cancellation);
 
     /// <summary>
     /// Добавляет сущность в БД.

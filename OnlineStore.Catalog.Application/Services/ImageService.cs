@@ -28,7 +28,7 @@ public sealed class ImageService : IImageService
     /// <inheritdoc/>
     public async Task<ImageDto> GetAsync(int imageId, CancellationToken cancellation)
     {
-        var image = await _imageRepository.GetAsync(imageId);
+        var image = await _imageRepository.GetAsync(imageId, cancellation);
 
         return _mapper.Map<ImageDto>(image);
     }
@@ -84,7 +84,7 @@ public sealed class ImageService : IImageService
         var result = new List<ProductImage>();
 
         var imageId = ExtractImageId(product.ImageUrl);
-        var existingImage = await _imageRepository.GetAsync(imageId);
+        var existingImage = await _imageRepository.GetAsync(imageId, cancellation);
 
         existingImage.Product = product;
 
@@ -93,7 +93,7 @@ public sealed class ImageService : IImageService
         foreach (var imageUrl in imagesUrls)
         {
             imageId = ExtractImageId(imageUrl);
-            existingImage = await _imageRepository.GetAsync(imageId);
+            existingImage = await _imageRepository.GetAsync(imageId, cancellation);
 
             existingImage.Product = product;
 

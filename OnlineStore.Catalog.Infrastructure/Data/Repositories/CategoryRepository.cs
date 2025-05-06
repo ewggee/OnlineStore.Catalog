@@ -11,8 +11,7 @@ public sealed class CategoryRepository(
 {
     public Task<List<Category>> GetNavigationCategoriesAsync(CancellationToken cancellation, int? categoryId)
     {
-        var query =
-            ReadOnlyDbContext
+        var query = ReadOnlyDbContext
             .Set<Category>()
             .Where(c => c.Products.Count == 0);
 
@@ -21,7 +20,7 @@ public sealed class CategoryRepository(
             query = query
                 .Where(c => c.Id != categoryId);
 
-            var dependentCategoriesIds = GetSubcategoryiesIds(categoryId.Value).ToList();
+            var dependentCategoriesIds = GetSubcategoriesIds(categoryId.Value).ToList();
 
             query = query
                 .Where(c => !dependentCategoriesIds.Contains(c.Id));
@@ -32,8 +31,7 @@ public sealed class CategoryRepository(
 
     public Task<List<Category>> GetWithoutSubsAsync(CancellationToken cancellation)
     {
-        var categories =
-            ReadOnlyDbContext
+        var categories = ReadOnlyDbContext
             .Set<Category>()
             .AsQueryable();
 
@@ -60,18 +58,15 @@ public sealed class CategoryRepository(
             .AnyAsync(subc => subc.ParentCategoryId == categoryId, cancellation);
     }
 
-    private IEnumerable<int> GetSubcategoryiesIds(int categoryId)
+    private IEnumerable<int> GetSubcategoriesIds(int categoryId)
     {
-        var subcategoriesIds =
-            ReadOnlyDbContext
+        var subcategoriesIds = ReadOnlyDbContext
             .Set<Category>()
             .Where(c => c.ParentCategoryId == categoryId)
             .Select(subc => subc.Id)
             .ToList();
 
         return subcategoriesIds
-                .Union(
-                    subcategoriesIds
-                    .SelectMany(GetSubcategoryiesIds));
+            .Union(subcategoriesIds.SelectMany(GetSubcategoriesIds));
     }
 }

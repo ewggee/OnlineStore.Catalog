@@ -1,0 +1,42 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoFixture" Version="4.18.1" />
+    <PackageReference Include="AutoFixture.AutoMoq" Version="4.18.1" />
+    <PackageReference Include="coverlet.collector" Version="6.0.0" />
+    <PackageReference Include="FluentValidation" Version="11.11.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
+    <PackageReference Include="Moq" Version="4.20.72" />
+    <PackageReference Include="NUnit" Version="3.14.0" />
+    <PackageReference Include="NUnit.Analyzers" Version="3.9.0" />
+    <PackageReference Include="NUnit3TestAdapter" Version="4.5.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="NUnit.Framework" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Integration\" />
+    <Folder Include="Unit\Controllers\" />
+    <Folder Include="Unit\Repositories\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\OnlineStore.Catalog.Application\OnlineStore.Catalog.Application.csproj" />
+    <ProjectReference Include="..\OnlineStore.Catalog.Contracts\OnlineStore.Catalog.Contracts.csproj" />
+    <ProjectReference Include="..\OnlineStore.Catalog.Domain\OnlineStore.Catalog.Domain.csproj" />
+    <ProjectReference Include="..\OnlineStore.Catalog.Infrastructure\OnlineStore.Catalog.Infrastructure.csproj" />
+    <ProjectReference Include="..\OnlineStore.Catalog.WebApi\OnlineStore.Catalog.WebApi.csproj" />
+  </ItemGroup>
+
+</Project>

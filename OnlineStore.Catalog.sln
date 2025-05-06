@@ -11,7 +11,16 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OnlineStore.Catalog.Domain"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OnlineStore.Catalog.Infrastructure", "OnlineStore.Catalog.Infrastructure\OnlineStore.Catalog.Infrastructure.csproj", "{740E63B5-136E-4880-8DCF-021936F006AF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineStore.Catalog.Contracts", "OnlineStore.Catalog.Contracts\OnlineStore.Catalog.Contracts.csproj", "{50DD32C6-A5D9-4A6F-8509-5D7725219B26}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OnlineStore.Catalog.Contracts", "OnlineStore.Catalog.Contracts\OnlineStore.Catalog.Contracts.csproj", "{50DD32C6-A5D9-4A6F-8509-5D7725219B26}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OnlineStore.Catalog.Tests", "OnlineStore.Catalog.Tests\OnlineStore.Catalog.Tests.csproj", "{4ED64EFD-DD63-4FAC-B233-74CEA21E1186}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{B2DF811A-61EF-4E61-9A8D-9A2B45C79B16}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{DC4C9261-2B0F-42E3-BC96-5773D4369B01}"
+	ProjectSection(SolutionItems) = preProject
+		dotnet-ci.yml = dotnet-ci.yml
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,9 +48,16 @@ Global
 		{50DD32C6-A5D9-4A6F-8509-5D7725219B26}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{50DD32C6-A5D9-4A6F-8509-5D7725219B26}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{50DD32C6-A5D9-4A6F-8509-5D7725219B26}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4ED64EFD-DD63-4FAC-B233-74CEA21E1186}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4ED64EFD-DD63-4FAC-B233-74CEA21E1186}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4ED64EFD-DD63-4FAC-B233-74CEA21E1186}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4ED64EFD-DD63-4FAC-B233-74CEA21E1186}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{DC4C9261-2B0F-42E3-BC96-5773D4369B01} = {B2DF811A-61EF-4E61-9A8D-9A2B45C79B16}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {74F7F0B9-6BD3-40E5-BA5A-8693377C1AF8}

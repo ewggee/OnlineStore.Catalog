@@ -117,7 +117,7 @@ public sealed class ProductRepository(
     }
 
     /// <inheritdoc/>
-    public override Task<Product?> GetAsync(int id)
+    public override Task<Product?> GetAsync(int id, CancellationToken cancellation)
     {
         return ReadOnlyDbContext
             .Set<Product>()
@@ -133,6 +133,13 @@ public sealed class ProductRepository(
         await MutableDbContext.SaveChangesAsync();
 
         return result.Entity.Id;
+    }
+
+    /// <inheritdoc/>
+    public async Task AddRangeAsync(Product[] products, CancellationToken cancellation)
+    {
+        await MutableDbContext.AddRangeAsync(products, cancellation);
+        await MutableDbContext.SaveChangesAsync();
     }
 
     /// <inheritdoc/>

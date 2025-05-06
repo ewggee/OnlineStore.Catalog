@@ -1,4 +1,5 @@
 using OnlineStore.Catalog.WebApi.Extensions;
+using OnlineStore.Catalog.WebApi.Filters;
 
 namespace OnlineStore.Catalog.WebApi;
 
@@ -13,11 +14,15 @@ public class Program
             .AddApplicationServices()
             .AddDistributedCaching()
             .AddMappings()
-            .AddOptions();
+            .AddOptions()
+            .AddKafka();
         
         // Add services to the container.
 
-        builder.Services.AddControllers();
+        builder.Services.AddControllers(options =>
+        {
+            options.Filters.Add<GlobalExceptionFilter>();
+        });
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();

@@ -6,7 +6,7 @@ namespace OnlineStore.Catalog.Infrastructure.Caching
     public class RedisCacheService : ICacheService
     {
         private readonly IRedisDatabase _redisDb;
-        private readonly TimeSpan _cacheLifetime = TimeSpan.FromHours(1);
+        private readonly TimeSpan _cacheDefaultLifetime = TimeSpan.FromHours(1);
 
         public RedisCacheService(IRedisDatabase redisDb)
         {
@@ -36,6 +36,23 @@ namespace OnlineStore.Catalog.Infrastructure.Caching
             return item;
         }
 
+        public async Task<T?> GetOrSetAsUnlimitedAsync<T>(string key, Func<Task<T?>> func)
+        {
+            var cachedItem = await _redisDb.GetAsync<T?>(key);
+            if (cachedItem != null)
+            {
+                return cachedItem;
+            }
+
+            var item = await func();
+            if (item != null)
+            {
+                await SetAsUnlimitedAsync(key, item);
+            }
+
+            return item;
+        }
+
         public async Task SetAsync<T>(string key, T value, TimeSpan? lifetime = null)
         {
             if (lifetime != null)
@@ -44,8 +61,13 @@ namespace OnlineStore.Catalog.Infrastructure.Caching
             }
             else
             {
-                await _redisDb.AddAsync(key, value, _cacheLifetime);
+                await _redisDb.AddAsync(key, value, _cacheDefaultLifetime);
             }
+        }
+
+        public async Task SetAsUnlimitedAsync<T>(string key, T value)
+        {
+            await _redisDb.AddAsync(key, value);
         }
 
         public async Task RefreshAsync<T>(string key, T value, TimeSpan? lifetime = null)
@@ -59,9 +81,14 @@ namespace OnlineStore.Catalog.Infrastructure.Caching
             await SetAsync(key, value, lifetime);
         }
 
-        public async Task RemoveAsync<T>(string key)
+        public async Task RemoveAsync(string key)
         {
             await _redisDb.RemoveAsync(key);
+        }
+
+        public async Task RemoveRangeAsync(string[] keys)
+        {
+            await _redisDb.RemoveAllAsync(keys);
         }
     }
 }

@@ -8,22 +8,27 @@ public class ProductImage
     /// <summary>
     /// Идентификатор.
     /// </summary>
-    public int Id { get; set; }
+    public int? Id { get; set; }
 
     /// <summary>
     /// Наименование.
     /// </summary>
-    public string Name { get; set; } = default!;
+    public string? Name { get; set; }
 
     /// <summary>
     /// Контент изображения.
     /// </summary>
-    public byte[] Content { get; set; } = default!;
+    public byte[]? Content { get; set; }
 
     /// <summary>
     /// Тип контента.
     /// </summary>
-    public string? ContentType { get; set; } = default!;
+    public string? ContentType { get; set; }
+
+    /// <summary>
+    /// URL изображения.
+    /// </summary>
+    public string? Url { get; set; }
 
     /// <summary>
     /// Идентификатор товара.

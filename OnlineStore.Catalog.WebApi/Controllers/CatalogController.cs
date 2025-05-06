@@ -1,95 +1,84 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using OnlineStore.Catalog.Application.Abstractions;
-using OnlineStore.Catalog.Contracts.Dtos;
 using OnlineStore.Catalog.Contracts.Requests;
 
-namespace OnlineStore.Catalog.WebApi.Controllers;
-
-[Route("api/catalog")]
-public class CatalogController : ControllerBase
+namespace OnlineStore.Catalog.WebApi.Controllers
 {
-    private readonly ICategoryService _categoryService;
-    private readonly IProductService _productService;
-
-    public CatalogController(
-        ICategoryService categoryService,
-        IProductService productService)
+    [ApiController]
+    [Route("api/catalog")]
+    public class CatalogController : ControllerBase
     {
-        _categoryService = categoryService;
-        _productService = productService;
-    }
+        private readonly ICategoryService _categoryService;
+        private readonly IProductService _productService;
 
-    [HttpGet("MainCategories")]
-    public async Task<IActionResult> GetMainCategories(CancellationToken cancellation)
-    {
-        var mainCategories = await _categoryService.GetMainCategoriesAsync(cancellation);
-
-        return Ok(mainCategories);
-    }
-
-    [HttpGet("{categoryId}")]
-    public async Task<IActionResult> GetCategory(int categoryId, CancellationToken cancellation)
-    {
-        var existingCategory = await _categoryService.GetAsync(categoryId, cancellation);
-        if (existingCategory == null)
+        public CatalogController(
+            ICategoryService categoryService,
+            IProductService productService)
         {
-            return NotFound();
+            _categoryService = categoryService;
+            _productService = productService;
         }
 
-        return Ok(existingCategory);
-    }
-
-    [HttpGet("{categoryId}/SubCategories")]
-    public async Task<IActionResult> GetSubcategories(int categoryId, CancellationToken cancellation)
-    {
-        var existingCategory = await _categoryService.GetAsync(categoryId, cancellation);
-        if (existingCategory == null)
+        [HttpGet("MainCategories")]
+        public async Task<IActionResult> GetMainCategories(CancellationToken cancellation)
         {
-            return NotFound();
+            var mainCategories = await _categoryService.GetMainCategoriesAsync(cancellation);
+
+            return Ok(mainCategories);
         }
 
-        if (!await _categoryService.IsCategoryHasSubcategoriesAsync(existingCategory.Id, cancellation))
+        [HttpGet("{categoryId}")]
+        public async Task<IActionResult> GetCategory(int categoryId, CancellationToken cancellation)
         {
-            return BadRequest();
+            var category = await _categoryService.GetAsync(categoryId, cancellation);
+
+            return Ok(category);
         }
 
-        var subCategories = await _categoryService.GetSubcategoriesByIdAsync(categoryId, cancellation);
-
-        return Ok(new CategoryWithSubcategoriesDto
+        [HttpGet("{categoryId}/Subcategories")]
+        public async Task<IActionResult> GetSubcategories([FromRoute] int categoryId, CancellationToken cancellation)
         {
-            Category = existingCategory,
-            Subcategories = subCategories
-        });
-    }
+            var categoryWithSubcategories = await _categoryService.GetCategoryWithSubcategoriesAsync(categoryId, cancellation);
 
-    [HttpGet("{categoryId}/Products")]
-    public async Task<IActionResult> GetProducts([FromRoute] int categoryId, GetProductsRequest request, CancellationToken cancellation)
-    {
-        var existingCategory = await _categoryService.GetAsync(request.CategoryId, cancellation);
-        if (existingCategory == null)
-        {
-            return NotFound();
+            if (!categoryWithSubcategories.Subcategories.Any())
+            {
+                return NotFound(new ProblemDetails
+                {
+                    Status = StatusCodes.Status404NotFound,
+                    Title = "No subcategories found.",
+                    Instance = HttpContext.Request.Path
+                });
+            }
+
+            return Ok(categoryWithSubcategories);
         }
 
-        if (await _categoryService.IsCategoryHasSubcategoriesAsync(existingCategory.Id, cancellation))
+        [HttpGet("{categoryId}/Products")]
+        public async Task<IActionResult> GetProducts([FromRoute] int categoryId, GetProductsRequest request, CancellationToken cancellation)
         {
-            return BadRequest();
+            var category = await _categoryService.GetAsync(categoryId, cancellation);
+
+            if (await _categoryService.IsCategoryHasSubcategoriesAsync(category.Id, cancellation))
+            {
+                return BadRequest(new ProblemDetails
+                {
+                    Status = StatusCodes.Status400BadRequest,
+                    Title = "Category has subcategories. Products cannot be retrieved.",
+                    Instance = HttpContext.Request.Path
+                });
+            }
+
+            var products = await _productService.GetAllAsync(request, category, cancellation);
+
+            return Ok(products);
         }
 
-        var products = await _productService.GetAllAsync(request, existingCategory, cancellation);
-
-        return Ok(products);
-    }
-
-    [HttpGet("Product/{productId}")]
-    public async Task<IActionResult> GetProduct(int productId, CancellationToken cancellation)
-    {
-        var existingProduct = await _productService.GetAsync(productId, cancellation);
-        if (existingProduct == null)
+        [HttpGet("Product/{productId}")]
+        public async Task<IActionResult> GetProduct(int productId, CancellationToken cancellation)
         {
-            return NotFound();
-        }
+            var product = await _productService.GetAsync(productId, cancellation);
 
-        return Ok(existingProduct);
+            return Ok(product);
+        }
     }
 }

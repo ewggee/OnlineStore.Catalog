@@ -19,9 +19,9 @@ public sealed class ImageRepository(
 
     public async Task<int> SaveAsync(ProductImage image, CancellationToken cancellation)
     {
-        await MutableDbContext.AddAsync(image, cancellation);
+        var result = await MutableDbContext.AddAsync(image, cancellation);
         await MutableDbContext.SaveChangesAsync(cancellation);
 
-        return image.Id;
+        return result.Entity.Id.Value;
     }
 }

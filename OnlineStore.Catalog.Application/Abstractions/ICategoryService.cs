@@ -18,13 +18,13 @@ public interface ICategoryService
     Task<CategoryDto> GetAsync(int categoryId, CancellationToken cancellation);
 
     /// <summary>
-    /// Возвращает список подкатегорий в категории.
+    /// Возвращает список категорию с подкатегориям.
     /// </summary>
-    Task<IReadOnlyList<CategoryDto>> GetSubcategoriesByIdAsync(int categoryId, CancellationToken cancellation);
+    Task<CategoryWithSubcategoriesDto> GetCategoryWithSubcategoriesAsync(int categoryId, CancellationToken cancellation);
 
     /// <summary>
-    /// Возвращает список навигационных категорий (не содержат в себе товаров).
-    /// <br>Исключает категорию по ID, которую нужно исключить из выборки, например, при обновлении данных (выбор родительской категории).</br>
+    /// Возвращает список навигационных категорий (те, которые не содержат в себе товаров).
+    /// <br>Исключает категорию с ID <paramref name="categoryId"/> и её подкатегории, которые нужно исключить из выборки, например, при обновлении данных (выбор родительской категории).</br>
     /// </summary>
     /// <param name="categoryId">ID категории, которую нужно исключить из выборки.</param>
     Task<IReadOnlyList<CategoryDto>> GetNavigationCategoriesAsync(CancellationToken cancellation, int? categoryId = null);

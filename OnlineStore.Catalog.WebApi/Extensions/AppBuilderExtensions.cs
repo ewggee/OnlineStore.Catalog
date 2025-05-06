@@ -9,6 +9,8 @@ using OnlineStore.Catalog.Infrastructure.Caching;
 using OnlineStore.Catalog.Infrastructure.Data;
 using OnlineStore.Catalog.Infrastructure.Data.Repositories;
 using OnlineStore.Catalog.Infrastructure.Mappings;
+using OnlineStore.Catalog.Infrastructure.Messaging;
+using OnlineStore.Catalog.WebApi.BackgroundServices;
 using StackExchange.Redis.Extensions.Core.Configuration;
 using StackExchange.Redis.Extensions.Newtonsoft;
 
@@ -47,6 +49,7 @@ public static class AppBuilderExtensions
         builder.Services.AddSingleton<ISpecificationFactory, SpecificationFactory>();
 
         builder.Services.Decorate<IProductService, CachingProductService>();
+        builder.Services.Decorate<ICategoryService, CachingCategoryService>();
 
         return builder;
     }
@@ -68,6 +71,7 @@ public static class AppBuilderExtensions
     {
         builder.Services.Configure<ImageOptions>(builder.Configuration.GetSection("ImagesOptions"));
         builder.Services.Configure<PaginationOptions>(builder.Configuration.GetSection("PaginationOptions"));
+        builder.Services.Configure<KafkaOptions>(builder.Configuration.GetSection("Kafka"));
 
         return builder;
     }
@@ -82,6 +86,16 @@ public static class AppBuilderExtensions
 
         IMapper mapper = mapperConfig.CreateMapper();
         builder.Services.AddSingleton(mapper);
+
+        return builder;
+    }
+
+    public static WebApplicationBuilder AddKafka(this WebApplicationBuilder builder)
+    {
+        builder.Services.AddSingleton<IMessageConsumer, KafkaConsumer>();
+        builder.Services.AddHostedService<KafkaConsumerJob>();
+
+        builder.Services.AddSingleton<IKafkaConsumerFactory, KafkaConsumerFactory>();
 
         return builder;
     }

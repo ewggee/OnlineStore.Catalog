@@ -1,10 +1,13 @@
-﻿namespace OnlineStore.Catalog.Contracts.Dtos;
+﻿using System.Text.Json.Serialization;
+
+namespace OnlineStore.Catalog.Contracts.Dtos;
 
 /// <summary>
 /// Краткая информация о товаре.
 /// </summary>
 public sealed class ShortProductDto
 {
+    [JsonIgnore]
     public int Id { get; set; }
 
     /// <summary>
@@ -30,7 +33,13 @@ public sealed class ShortProductDto
     /// <summary>
     /// ID категории.
     /// </summary>
+    [JsonIgnore]
     public int? CategoryId { get; set; }
+
+    /// <summary>
+    /// ID категории.
+    /// </summary>
+    public string? CategoryName { get; set; }
 
     /// <summary>
     /// Титульное изображение.
@@ -40,5 +49,5 @@ public sealed class ShortProductDto
     /// <summary>
     /// Список изображений.
     /// </summary>
-    public string[] ImagesUrls { get; set; } = [];
+    public string[]? ImagesUrls { get; set; }
 }

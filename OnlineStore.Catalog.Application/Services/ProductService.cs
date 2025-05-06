@@ -1,10 +1,13 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using OnlineStore.Catalog.Application.Abstractions;
 using OnlineStore.Catalog.Contracts.Dtos;
+using OnlineStore.Catalog.Contracts.Helpers;
 using OnlineStore.Catalog.Contracts.Options;
 using OnlineStore.Catalog.Contracts.Requests;
 using OnlineStore.Catalog.Domain.Entities;
+using OnlineStore.Catalog.Domain.Exceptions;
 using OnlineStore.Catalog.Domain.Repositories;
 
 namespace OnlineStore.Catalog.Application.Services;
@@ -43,7 +46,9 @@ public sealed class ProductService : IProductService
     /// <inheritdoc/>
     public async Task<ShortProductDto?> GetAsync(int productId, CancellationToken cancellation)
     {
-        var existingProduct = await _productRepository.GetAsync(productId);
+        var existingProduct = await _productRepository.GetAsync(productId, cancellation)
+            ?? throw new EntityNotFoundException(ExceptionMessagesHelper.EntityNotFound<Product>(productId));
+
         //todo: маппинг возможен после загрузки изображений
         var productDto = _mapper.Map<ShortProductDto>(existingProduct);
 
@@ -128,6 +133,32 @@ public sealed class ProductService : IProductService
     }
 
     /// <inheritdoc/>
+    public async Task AddProductsAsync(ShortProductDto[] productDtos, CancellationToken cancellation)
+    {
+        var products = new List<Product>();
+
+        foreach (var productDto in productDtos)
+        {
+            var product = _mapper.Map<Product>(productDto);
+
+            if (productDto.ImagesUrls != null)
+            {
+                product.Images = productDto.ImagesUrls.Select(url => new ProductImage
+                {
+                    Url = url,
+                    Product = product
+                }).ToArray();
+            }
+
+            product.CreatedAt = _timeProvider.GetUtcNow().UtcDateTime;
+
+            products.Add(product);
+        }
+
+        await _productRepository.AddRangeAsync(products.ToArray(), cancellation);
+    }
+
+    /// <inheritdoc/>
     public async Task UpdateAsync(ShortProductDto productDto, CancellationToken cancellation)
     {
         var product = _mapper.Map<Product>(productDto);
@@ -148,7 +179,9 @@ public sealed class ProductService : IProductService
     /// <inheritdoc/>
     public async Task DeleteAsync(int productId, CancellationToken cancellation)
     {
-        var product = await _productRepository.GetAsync(productId);
+        var product = await _productRepository.GetAsync(productId, cancellation)
+            ?? throw new EntityNotFoundException(ExceptionMessagesHelper.EntityNotFound<Product>(productId));
+
         product!.IsDeleted = true;
 
         await _productRepository.DeleteAsync(product, cancellation);
