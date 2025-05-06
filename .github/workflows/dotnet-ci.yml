@@ -46,11 +46,18 @@ jobs:
     needs: build
     runs-on: windows-latest
     steps:
-      - name: Download build artifacts
+      - uses: actions/checkout@v4
+      
+      - name: Download artifact
         uses: actions/download-artifact@v4
         with:
           name: build-output
-          path: bin/Release/net8.0
+          path: ./downloaded-artifact
+          
+      - name: Verify artifact
+        run: |
+          ls -R ./downloaded-artifact
+          echo "Artifact content above"
 
       - name: Run unit tests
         run: dotnet test --configuration Release --no-build --filter "Category=Unit"
