@@ -53,7 +53,7 @@ jobs:
           path: bin/Release/net8.0
 
       - name: Run unit tests
-        run: dotnet test --configuration Release --no-build
+        run: dotnet test .\OnlineStore.Catalog.Tests\OnlineStore.Catalog.Tests.csproj --configuration Release --no-build
 
   publish:
     needs: [build, test]
