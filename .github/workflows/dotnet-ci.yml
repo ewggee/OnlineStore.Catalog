@@ -48,7 +48,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Run tests
-        run: dotnet test ./OnlineStore.Catalog.Tests.csproj
+        run: dotnet test ./OnlineStore.Catalog.Tests/OnlineStore.Catalog.Tests.csproj
 
       - name: Upload test artifacts
         uses: actions/upload-artifact@v4
