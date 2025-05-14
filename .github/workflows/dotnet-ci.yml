@@ -11,44 +11,45 @@ env:
   ASPNETCORE_ENVIRONMENT: 'Production'
 
 jobs:
-  # build:
-  #   runs-on: windows-latest
-  #   steps:
-  #     - uses: actions/checkout@v4
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
 
-  #     # - name: Cache NuGet packages
-  #     #   uses: actions/cache@v3
-  #     #   with:
-  #     #     path: ~\.nuget\packages
-  #     #     key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
-  #     #     restore-keys: |
-  #     #       ${{ runner.os }}-nuget-
+      - name: Cache NuGet packages
+        uses: actions/cache@v3
+        with:
+          path: ~\.nuget\packages
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-nuget-
 
-  #     - name: Setup .NET SDK
-  #       uses: actions/setup-dotnet@v3
-  #       with:
-  #         dotnet-version: ${{ env.DOTNET_VERSION }}
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+          cache: true
 
-  #     - name: Restore dependencies
-  #       run: dotnet restore
+      - name: Restore dependencies
+        run: dotnet restore
 
-  #     - name: Build
-  #       run: dotnet build --configuration Release --no-restore
+      - name: Build
+        run: dotnet build --configuration Release --no-restore
 
-  #     - name: Upload build artifacts
-  #       uses: actions/upload-artifact@v4
-  #       with:
-  #         name: build-output
-  #         path: bin/Release/net8.0
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-output
+          path: bin/Release/net8.0
 
   test:
-    # needs: build
+    needs: build
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
 
       - name: Run tests
-        run: dotnet test ./OnlineStore.Catalog.Tests/OnlineStore.Catalog.Tests.csproj
+        run: dotnet test ./OnlineStore.Catalog.Tests/OnlineStore.Catalog.Tests.csproj --no-build --verbosity normal
 
       - name: Upload test artifacts
         uses: actions/upload-artifact@v4
@@ -56,21 +57,17 @@ jobs:
           name: test-output
           path: bin/Release/net8.0
 
-  # publish:
-  #   needs: [build, test]
-  #   runs-on: windows-latest
-  #   steps:
-  #     - name: Download build artifacts
-  #       uses: actions/download-artifact@v4
-  #       with:
-  #         name: build-output
-  #         path: bin/Release/net8.0
+  publish:
+    needs: [build, test]
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
 
-  #     - name: Publish
-  #       run: dotnet publish -c Release -o ./publish
+      - name: Publish
+        run: dotnet publish -c Release -o ./publish
 
-  #     - name: Upload publish artifact
-  #       uses: actions/upload-artifact@v4
-  #       with:
-  #         name: product-service
-  #         path: ./publish
+      - name: Upload publish artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: publish-output
+          path: bin/Release/net8.0
