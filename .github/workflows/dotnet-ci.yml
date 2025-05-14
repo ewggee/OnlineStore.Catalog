@@ -15,7 +15,7 @@ jobs:
   build_and_test:
     runs-on: windows-latest
     steps:
-      - uses: actions/checkot@v4
+      # - uses: actions/checkot@v4
 
       - name: Setup .NET SDK
         uses: actions/setup-dotnet@v4
