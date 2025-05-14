@@ -8,13 +8,14 @@ on:
 
 env:
   DOTNET_VERSION: '8.x'
-  ASPNETCORE_ENVIRONMENT: 'Production'
+  # ASPNETCORE_ENVIRONMENT: 'Production'
+  DOTNET_CONFIGURATION: 'Realese'
 
 jobs:
   build:
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v4
+      # - uses: actions/checkout@v4
 
       - name: Setup .NET SDK
         uses: actions/setup-dotnet@v4
@@ -33,7 +34,7 @@ jobs:
         run: dotnet restore
 
       - name: Build
-        run: dotnet build --configuration Release --no-restore
+        run: dotnet build --configuration ${{ env.DOTNET_CONFIGURATION }} --no-restore
 
       # - name: Upload build artifacts
       #   uses: actions/upload-artifact@v4
@@ -45,10 +46,10 @@ jobs:
     needs: build
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v4
+      # - uses: actions/checkout@v4
 
       - name: Run tests
-        run: dotnet test ./OnlineStore.Catalog.Tests/OnlineStore.Catalog.Tests.csproj #--no-build --verbosity normal
+        run: dotnet test ./OnlineStore.Catalog.Tests/OnlineStore.Catalog.Tests.csproj --no-build --verbosity normal
 
       # - name: Upload test artifacts
       #   uses: actions/upload-artifact@v4
@@ -60,10 +61,10 @@ jobs:
     needs: [build, test]
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v4
+      # - uses: actions/checkout@v4
 
       - name: Publish
-        run: dotnet publish -c Release -o ./publish
+        run: dotnet publish --no-restore --configuration ${{ env.DOTNET_CONFIGURATION }} -o ./publish
 
       # - name: Upload publish artifacts
       #   uses: actions/upload-artifact@v4
