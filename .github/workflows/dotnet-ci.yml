@@ -16,19 +16,18 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Cache NuGet packages
-        uses: actions/cache@v3
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v4
         with:
-          path: ~\.nuget\packages
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Cache NuGet packages
+        uses: actions/cache@v4
+        with:
+          path: ${{ github.workspace }}/.nuget/packages
           key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
           restore-keys: |
             ${{ runner.os }}-nuget-
-
-      - name: Setup .NET SDK
-        uses: actions/setup-dotnet@v3
-        with:
-          dotnet-version: ${{ env.DOTNET_VERSION }}
-          cache: true
 
       - name: Restore dependencies
         run: dotnet restore
@@ -36,11 +35,11 @@ jobs:
       - name: Build
         run: dotnet build --configuration Release --no-restore
 
-      - name: Upload build artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: build-output
-          path: bin/Release/net8.0
+      # - name: Upload build artifacts
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: build-output
+      #     path: bin/Release/net8.0
 
   test:
     needs: build
