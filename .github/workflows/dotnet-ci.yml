@@ -9,7 +9,7 @@ on:
 env:
   DOTNET_VERSION: '8.x'
   # ASPNETCORE_ENVIRONMENT: 'Production'
-  DOTNET_CONFIGURATION: 'Realese'
+  DOTNET_CONFIGURATION: 'Release'
 
 jobs:
   build:
